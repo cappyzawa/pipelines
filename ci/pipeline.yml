@@ -16,13 +16,19 @@ jobs:
   plan:
   - get: pr
     trigger: true
+  - put: pr
+    params:
+      path: pr
+      status: pending
   - task: unit-test
     file: pr/ci/tasks/unit-test.yml
     on_success:
       put: pr
       params:
+        path: pr
         status: success
     on_failure:
       put: pr
       params:
+        path: pr
         status: failure
