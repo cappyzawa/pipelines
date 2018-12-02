@@ -1,0 +1,28 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: teliaoss/github-pr-resource
+resources:
+- name: pr
+  type: pull-request
+  check_every: 24h
+  webhook_token: ((webhook-token))
+  source:
+    repository: cappyzawa/pipelines
+    access_token: ((github-access-token))
+jobs:
+- name: test-pr
+  plan:
+  - get: pr
+    trigger: true
+  - task: unit-test
+    file: pr/ci/tasks/unit-test.yml
+    on_success:
+      put: pr
+      params:
+        status: success
+    on_failure:
+      put: pr
+      params:
+        status: failure
