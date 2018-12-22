@@ -1,0 +1,24 @@
+resources:
+- name: timer
+  type: cappyzawa-time
+  check_every: 1m
+  source:
+    interval: 1h
+    start: 10:00 AM
+    stop: 7:00 PM
+    location: Asia/Tokyo
+
+
+resource_types:
+- name: cappyzawa-time
+  type: registry-image
+  source:
+    repository: cappyzawa/time-resource
+    
+jobs:
+- name: test
+  build_logs_to_retain: 5
+  plan:
+  - get: timer
+    trigger: true
+  - put: timer
